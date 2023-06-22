@@ -1,55 +1,61 @@
-<h1 align="center"> api_final</h1>
-<h1 align="center"> REST API для <span style="color:red">Ya</span>tube</h1>
+# REST_API_Yatube - API для сервиса [YaTube](https://github.com/Truth711/YaTube) .
+## Описание:
+REST API для вымышленного сайта ценителей различных произведений искусства yamdb. 
 
-<h3>Автор проекта:</h3>
-<h4>Truth711, студент факультета Бэкенд, когорты №47</h3> 
-<h3>Как запустить проект:</h3> 
+Произведения делятся на следующие категории: «Книги», «Фильмы», «Музыка». Администратор может расширить список категорий, а также удалять произведения, категории и жанры, назначать роли пользователям. Зарегистрированные пользователи могут оставлять к произведениям текстовые отзывы и ставить оценку в диапазоне от одного до десяти произведениям, комментировать отзывы. Также они могут редактировать и удалять свои отзывы и комментарии, свои оценки произведений.
 
-Клонировать репозиторий и перейти в него в командной строке:
+Регистрация и аутентификация реализованы с использованием JWT токенам.
 
-```
-git clone https://github.com/Truth711/api_final_yatube.git
-```
+Проект упакован в три docker-контейнера.
 
-```
-cd api_final_yatube
-```
+## Технологии:
+- [Django](https://www.djangoproject.com/)
+- [Django REST Framework](https://www.django-rest-framework.org)
+- [Docker](https://www.docker.com)
+- [Docker-compose](https://docs.docker.com/compose/)
+- [PyJWT](https://pyjwt.readthedocs.io/)
+- [PosgreSQL](https://www.postgresql.org)
+- [Nginx](https://nginx.org/)
+- [Gunicorn](https://gunicorn.org)
 
-Cоздать и активировать виртуальное окружение:
+## Установка и развертывание проекта:
+- Клонировать репозиторий, перейти в директорию с проектом:
+- Создать виртуальное окружение и установить зависимости из requirements.txt
+- Установить Docker и docker-compose
+- Cоздать файл с переменными окружения:
+```
+cd infra
+touch .env
+nano .env
 
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=postgres
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+DB_HOST=db
+DB_PORT=5432
 ```
-python -m venv venv
+- Забилдить и поднять проект:
 ```
-
+docker-compose up -d --build
 ```
-source venv/Scripts/activate
+- Выполнить команды для миграции, создания суперюзера и сбора статики:
 ```
-
+docker-compose exec web python manage.py migrate
+docker-compose exec web python manage.py createsuperuser
+docker-compose exec web python manage.py collectstatic --no-input 
 ```
-python -m pip install --upgrade pip
+- Заполнить БД из фикстуры:
 ```
-
-Установить зависимости из файла requirements.txt:
-
+cp fixtures.json container_id:app/fixtures.json
+docker-compose exec web python manage.py loaddata fixtures.json
 ```
-pip install -r requirements.txt
+- Запустить проект:
 ```
-
-Выполнить миграции:
-
+docker-compose up -d
 ```
-python manage.py migrate
+- Используйте следующий URL для ознакомления с возможностями API (URL будет автоматически доступен после запуска проекта):
 ```
-
-Запустить проект:
-
+redoc/
 ```
-python manage.py runserver
-```
-
-<h3>Технологии:</h3> 
-<ul>
-  <li>Python</li>
-  <li>Django</li>
-  <li>DRF</li>
-</ul>
+- Готово!
